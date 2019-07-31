@@ -6,37 +6,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>♫ Music Player ♫</title>
+
+    <link rel="stylesheet" type="text/css" href="./assets/css/overlay.css">
     <link rel="stylesheet" type="text/css" href="./assets/css/style.css">
 </head>
 
-<body>
-    <h3 class="playing">⫸ Now playing:</h3>
+<body >
+    <div class="nav"></div>
 
-    <!-- On small height, the playlist needs to scroll to view more elements. -->
-    <div class="playlist" ondrop="drop_handler(event)" ondragover="dragover_handler(event)">
+    <div class="body" ondrop="dropHandler(event)" ondragover="dragover_handler(event)">
+        <div class="infoContainer">
+            <h1>Now playing:</h1>
+            <div class="authorInfo">
+                <div class="img"></div>
+                <div class="textInfo">
+                    <div class="primaryInfo">
+                        <h1 class="playing">Title</h1>
+                        <h2>Author</h2>
+                    </div>
+                    <div class="secondaryInfo">
+                        <h2>Genre</h2>
+                        <h3 class="tags">Tags</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- On small height, the playlist needs to scroll to view more elements. -->
+        <div class="playlistContainer">
+            <button class="addMusic">+</button>
+            <div class="queue">
+            </div>
+        </div>
     </div>
 
-    <div class="controls">
-        <button class="play">Play</button>
-        <button class="next">Next</button>
-        <button class="exit_button">Exit</button>
+    <div class="playbackController">
+        <div class="controls">
+            <button class="stepBack">&lt;&lt;</button>
+            <button class="play">Play</button>
+            <button class="stepForward">&gt;&gt;</button>
+        </div>
     </div>
 
     <script>
-        const remote = require("electron").remote;
-        var x = $(".exit_button");
-        x.addEventListener("click", () => {
-            var window = remote.getCurrentWindow();
-            window.close();
-        });
+        if (window.require) {
+            const remote = require("electron").remote;
+            var x = $(".exit_button");
+            x.addEventListener("click", () => {
+                var window = remote.getCurrentWindow();
+                window.close();
+            });
 
-        function $(element) {
-            return document.querySelector(element) || undefined;
+            function $(element) {
+                return document.querySelector(element) || undefined;
+            }
         }
     </script>
 
-    <script src="./assets/js/player.js"></script>
-    <script src="./assets/js/file_drag.js"></script>
+    <script src="./assets/js/Player.js"></script>
+    <script src="./assets/js/Overlay.js"></script>
+    <script src="./assets/js/FileDrag.js"></script>
 </body>
 
 </html>

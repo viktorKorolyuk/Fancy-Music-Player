@@ -1,23 +1,28 @@
 /* Variable definition for easier editing */
 
 * {
-    --colour_background: #111;
-    --colour_drag_bar: #333;
-    --colour_button_normal: #fff;
-    --colour_button_hover: #1e95f7;
+    --colour_background: #2A313A;
+    --colour_drag_bar: #3A4350;
+    --colour_playbackController_background: #3B4451;
+
     --colour_playlist_odd: #fff;
     --colour_playlist_even: #eee;
     --colour_playlist_selected: #1e95f7;
-    --colour_button_exit: #c91313;
-    --colour_button_exit_hover: #d83131;
+
+
+    font-family: sans-serif;
+    font-weight: 100;
 }
 
 html::before {
     display: block;
     width: 100%;
-    height: 20px;
+    height: 40px;
     content: "";
     background: var(--colour_drag_bar);
+
+    /* Allows the window to be dragged at this point.
+    It's for the electron app only */
     -webkit-app-region: drag;
 }
 
@@ -30,58 +35,98 @@ body {
     color: white;
     background: var(--colour_background);
     overflow: hidden;
+    margin: 0;
 }
 
-button {
+.body {
+    display: flex;
+    padding: 2em;
     box-sizing: border-box;
-    border: none;
-    border-radius: 0.25em;
-    padding: 1em;
-    padding: 0.5em 0;
-    font-size: 1em;
-    color: black;
-    background: var(--colour_button_normal);
-    transition: 0.2s;
 }
 
-button:hover {
-    color: white;
-    background: var(--colour_button_hover);
+.infoContainer {
+    flex: 2;
 }
 
-button:focus {
-    outline: none;
+.authorInfo {
+    --imgWidth: 150px;
+    display: grid;
+    grid-template-columns: var(--imgWidth) auto;
+    grid-gap: 1em;
 }
 
-.playing {
-    display: block;
-    font-weight: normal;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    width: 100vw;
+.authorInfo .img {
+    width: calc(var(--imgWidth));
+    height: calc(var(--imgWidth));
+
+    border-radius: 10px;
+    background: linear-gradient(45deg, purple, cyan);
 }
 
-.playlist {
+.textInfo {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
+}
+
+.textInfo h1,
+.textInfo h2,
+.textInfo h3 {
+    margin: 0;
+}
+
+.textInfo h2 {
+    font-size: 1.4em;
+}
+
+.textInfo .tags {
+    color: #999;
+}
+
+.textInfo h1:nth-child(2) {
+    display: inline-block;
+}
+
+.playlistContainer {
+    flex: 1;
+
     width: 100%;
-    height: 50vh;
-    border-radius: .25em;
-    color: black;
-    background: var(--colour_playlist_odd);
-    overflow-y: scroll;
+    height: 100%;
+
+    font-size: 1.2em;
+    color: #888888;
 }
 
-.playlist *:nth-child(even) {
-    color: black;
-    background: var(--colour_playlist_even);
+.addMusic{
+    width: 45px;
+    height: 45px;
+
+    margin-bottom: 0.3em;
+
+    color: white;
+    font-size: 2em;
+
+    border: none;
+    border-radius: 50%;
+
+    background: none;
 }
 
-.playlist p {
+.queue {
+    display: flex;
+    flex-direction: column;
+}
+
+.queue p {
     margin: 0em;
     padding: 0.5em;
     word-wrap: break-word;
+}
+
+.queue p:before {
+    display: inline-block;
+    content: "...";
+    transform: rotate(90deg);
 }
 
 .playlist .selected {
@@ -89,50 +134,45 @@ button:focus {
     background: var(--colour_playlist_selected);
 }
 
-.controls {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    grid-gap: 15px;
-    grid-template-areas: "p p p n n n" "e e e e e e";
-    margin-top: 1.5em;
-}
-
-.controls button:nth-child(1) {
-    grid-area: p;
-}
-
-.controls button:nth-child(2) {
-    grid-area: n;
-}
-
-.controls button:nth-child(3) {
-    grid-area: e;
-}
-
-.exit_button {
-    display: block;
-    color: white;
-    background: var(--colour_button_exit);
-}
-
-.exit_button:hover {
-    background: var(--colour_button_exit_hover);
-}
-
-
-/* The overlay that pops up when file is dragged */
-
-.overlay {
+.playbackController {
     position: absolute;
-    top: 0;
-    left: 0;
     display: flex;
-    flex-direction: column;
     justify-content: center;
+    align-items: flex-end;
+
     width: 100%;
-    height: 100%;
-    align-items: center;
-    font-size: 10vw;
-    background: rgba(0, 0, 0, 0.804);
-    opacity: 1;
+    height: 100px;
+    bottom: 0;
+
+    padding: 1em;
+
+    background: var(--colour_playbackController_background);
+}
+
+.playbackController button {
+    width: 60px;
+    height: 60px;
+
+    top: 50%;
+    left: 50%;
+
+    color: white;
+
+    background: var(--colour_background);
+    border-radius: 50%;
+
+    border: 10px solid rgb(43, 51, 62);
+    overflow: hidden;
+
+    transition: background 1s;
+}
+
+.playbackController button:hover{
+    color: #222;
+    background: #eee;
+}
+
+.playbackController button:nth-child(2){
+    width: 75px;
+    height: 75px;
 }

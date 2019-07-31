@@ -1,12 +1,13 @@
 const playlist = [];
 var overlay = null;
+let file:any;
+
 
 // Is called when a file is dropped into the "drop zone".
 function drop_handler(event) {
-    console.log("stuff")
     event.preventDefault();
 
-    window.items = event.dataTransfer.items;
+    (window as any).items = event.dataTransfer.items;
     // Loop through every file and add them to the list.
     for (file of event.dataTransfer.items) {
         scanFile(file.webkitGetAsEntry());
@@ -20,14 +21,14 @@ function drop_handler(event) {
 // Determines if the item is a directory or a valid item.
 function scanFile(item) {
     if(item.isFile){
-        fileReader(item).then(file => {
+        fileReader(item).then((file:any) => {
             playlist.push({
                 name: file.name,
                 url: URL.createObjectURL(file)
             });
 
             // Tell player.js to update the DOM
-            addMusic(file.name);
+            player.addMusic(file.name);
             console.log("Added new music to list.");
         });
 
@@ -38,12 +39,10 @@ function scanFile(item) {
 
 // If it is a directory, read the contents.
 function dirReader(directory) {
-    // console.log(directory);
-    window.dir = directory;
+    (window as any).dir = directory;
     var reader = directory.createReader();
     reader.readEntries(function (e) {
         e.forEach(file => {
-            // console.log(file);
             scanFile(file);
         });
     });

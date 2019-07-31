@@ -1,7 +1,5 @@
 # Fancy Music Player (Fmp)
 
-![FMP screenshot](assets/images/Demo.png)
-
 A (very) simple and lightweight music player built on Electron.
 
 The application features a pleasant dark-theme (for the night-owls) and an easy to use interface.

@@ -1,16 +1,17 @@
-if(!(window as any).$)
-(window as any).$ = document.querySelector.bind(document);
+if (!(window as any).$)
+    (window as any).$ = document.querySelector.bind(document);
 
 class AudioPlayer {
+
     audioPlayer = new Audio();
     playlistDOM = $(".queue");
-    MusicTitleText:string = "Now playing: ";
-    playlistDOMArray:HTMLParagraphElement[] = [];
-    currentSongIndex:number = 0;
-    index:number = 0;
+    MusicTitleText: string = "Now playing: ";
+    playlistDOMArray: HTMLParagraphElement[] = [];
+    currentSongIndex: number = 0;
+    index: number = 0;
 
     // Add music to the DOM playlist
-    addMusic(title_name:string) {
+    addMusic(title_name: string) {
 
         // Add the new element to the playlist.
         let p = document.createElement("p");
@@ -42,7 +43,7 @@ class AudioPlayer {
     }
 
     // Changes the music to the specified index.
-    changeMusic(index:number) {
+    changeMusic(index: number) {
 
         // Find the first DOM element with a "selected" class name.
         if ($(".selected")) {
@@ -60,7 +61,7 @@ class AudioPlayer {
             this.playlistDOM.children[index].className = "selected";
             this.currentSongIndex = index;
             this.updateSongTitle(playlist[index]);
-            
+
             if (!this.audioPlayer.paused) {
                 this.playMusic();
             }
@@ -109,7 +110,7 @@ class AudioPlayer {
         }
     }
 
-    audioPlayerError(e:any) {
+    audioPlayerError(e: any) {
         this.removeMusic();
     }
 

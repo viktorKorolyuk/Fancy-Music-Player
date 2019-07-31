@@ -1,4 +1,5 @@
-const $:any = document.querySelector.bind(document);
+if(!(window as any).$)
+(window as any).$ = document.querySelector.bind(document);
 
 class AudioPlayer {
     audioPlayer = new Audio();
@@ -7,9 +8,6 @@ class AudioPlayer {
     playlistDOMArray:HTMLParagraphElement[] = [];
     currentSongIndex:number = 0;
     index:number = 0;
-
-    constructor() {
-    }
 
     // Add music to the DOM playlist
     addMusic(title_name:string) {
@@ -27,6 +25,7 @@ class AudioPlayer {
         // Used for later removal.
         this.playlistDOMArray.push(p);
     }
+
     removeMusic(index = this.currentSongIndex) {
         this.playlistDOMArray[index].remove();
         this.playlistDOMArray.splice(index, 1);
@@ -61,6 +60,7 @@ class AudioPlayer {
             this.playlistDOM.children[index].className = "selected";
             this.currentSongIndex = index;
             this.updateSongTitle(playlist[index]);
+            
             if (!this.audioPlayer.paused) {
                 this.playMusic();
             }

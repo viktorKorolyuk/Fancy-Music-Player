@@ -12,12 +12,12 @@ function createWindow(){
     win = new BrowserWindow({
         width: 1920/2,
         height: 1080/2,
-        icon: path.join(__dirname, "assets/icons/png/64x64.png"),
+        icon: path.join(__dirname, "../icons/png/64x64.png"),
         frame:false,
     });
 
     win.loadURL(url.format({
-        pathname: path.join(__dirname, "index.html"),
+        pathname: path.join(__dirname, "../../index.html"),
         protocol:"file:",
         slashes:true
     }));

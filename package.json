@@ -1,12 +1,12 @@
 {
-  "name": "musicPlayer",
+  "name": "music_player",
   "productName": "Fancy Music Player",
   "version": "1.0.0",
   "description": "A small music player running on electron.",
-  "main": "index.js",
+  "main": "assets/js/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
+    "start": "tsc --build && electron ."
   },
   "keywords": [],
   "author": "",

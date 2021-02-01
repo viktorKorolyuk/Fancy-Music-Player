@@ -1,9 +1,10 @@
 if(!(window as any).$)
+
 (window as any).$ = document.querySelector.bind(document);
 
 class AudioPlayer {
     audioPlayer = new Audio();
-    playlistDOM = $(".queue");
+    playlistDOM = (window as any).$(".queue");
     MusicTitleText:string = "Now playing: ";
     playlistDOMArray:HTMLParagraphElement[] = [];
     currentSongIndex:number = 0;
@@ -38,16 +39,16 @@ class AudioPlayer {
 
     // Change the current song header.
     updateSongTitle(song) {
-        $(".playing").innerText = `${this.MusicTitleText}"${song.name || song}"`;
+        (window as any).$(".playing").innerText = `${this.MusicTitleText}"${song.name || song}"`;
     }
 
     // Changes the music to the specified index.
     changeMusic(index:number) {
 
         // Find the first DOM element with a "selected" class name.
-        if ($(".selected")) {
+        if ((window as any).$(".selected")) {
             // The current item is de-selected
-            $(".selected").className = "";
+            (window as any).$(".selected").className = "";
         }
 
         // Verify index is within the bounds of the avaliable playlist size.
@@ -99,7 +100,7 @@ class AudioPlayer {
         // If no music exists, don't do anything.
         if (playlist.length === 0) return;
 
-        $(".play").innerText = this.audioPlayer.paused ? "Pause" : "Play";
+        (window as any).$(".play").innerText = this.audioPlayer.paused ? "Pause" : "Play";
         if (this.audioPlayer.paused) {
 
             // Set the audio source to the current chosen song URL.
@@ -124,5 +125,5 @@ const player = new AudioPlayer();
 player.audioPlayer.addEventListener("ended", player.audioPlayerOnEnd);
 player.audioPlayer.addEventListener("error", player.audioPlayerError);
 
-$(".stepBack").addEventListener("click", player.chooseNextTrack);
-$(".play").addEventListener("click", player.togglePlay);
+(window as any).$(".stepBack").addEventListener("click", player.chooseNextTrack);
+(window as any).$(".play").addEventListener("click", player.togglePlay);

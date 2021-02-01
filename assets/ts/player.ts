@@ -4,7 +4,7 @@ if(!(window as any).$)
 
 class AudioPlayer {
     audioPlayer = new Audio();
-    playlistDOM = (window as any).$(".queue");
+    playlistDOM = (window as any).$(".playlist");
     MusicTitleText:string = "Now playing: ";
     playlistDOMArray:HTMLParagraphElement[] = [];
     currentSongIndex:number = 0;
@@ -125,5 +125,5 @@ const player = new AudioPlayer();
 player.audioPlayer.addEventListener("ended", player.audioPlayerOnEnd);
 player.audioPlayer.addEventListener("error", player.audioPlayerError);
 
-(window as any).$(".stepBack").addEventListener("click", player.chooseNextTrack);
-(window as any).$(".play").addEventListener("click", player.togglePlay);
+// (window as any).$(".stepBack").addEventListener("click", player.chooseNextTrack);
+(window as any).$(".play").addEventListener("click", () => player.togglePlay());

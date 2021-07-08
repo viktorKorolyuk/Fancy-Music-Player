@@ -1,0 +1,1 @@
+export const $: (query: string) => HTMLElement | null = (query: string) => document.querySelector(query)

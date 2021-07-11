@@ -10,6 +10,14 @@ The learning curve is almost **non-existant**.
 ### How to use
 Simply start the application and drag-&-drop your desired music files in.
 
+### Development
+This project uses the electron-webpack library.
+To compile and run the project:
+```
+yarn
+yarn dev
+```
+
 ### How it works
 This application uses the electron framework and takes advantage of the webaudio api. The javascript creates a new instance of the `Audio` class and let's it do all the work.
 

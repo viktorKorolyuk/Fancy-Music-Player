@@ -1,24 +1,17 @@
-<h3 class="playing">⫸ Now playing:</h3>
+<div class="playing">
+    <div class="information">
+        <div class="d-flex justify-center">
+            <div style="width: 246px; height: 246px; background: white; border-radius: 6px;"></div>
+        </div>
+        <h1 id="playing">Music name</h1>
+        <!-- <h2>Author name</h2> -->
+    </div>
 
-<!-- On small height, the playlist needs to scroll to view more elements. -->
-<div class="playlist" id="playlist">
+    <div class="controls">
+        <a id="prev-btn">prev-btn</a>
+        <a id="play-btn">play-btn</a>
+        <a id="next-btn">next-btn</a>
+    </div>
 </div>
 
-<div class="controls">
-    <button class="play">Play</button>
-    <button class="next">Next</button>
-    <button class="exit_button">Exit</button>
-</div>
-
-<script>
-    const remote = require("electron").remote;
-    var x = $(".exit_button");
-    x.addEventListener("click", () => {
-        var window = remote.getCurrentWindow();
-        window.close();
-    });
-
-    function $(element) {
-        return document.querySelector(element) || undefined;
-    }
-</script>
+<div class="playlist" id="playlist"></div>

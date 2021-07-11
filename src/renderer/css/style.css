@@ -1,124 +1,117 @@
 /* Variable definition for easier editing */
 
 * {
-    --colour_background: #111;
-    --colour_drag_bar: #333;
-    --colour_button_normal: #fff;
-    --colour_button_hover: #1e95f7;
-    --colour_playlist_odd: #fff;
-    --colour_playlist_even: #eee;
-    --colour_playlist_selected: #1e95f7;
-    --colour_button_exit: #c91313;
-    --colour_button_exit_hover: #d83131;
-}
-
-html::before {
-    display: block;
-    width: 100%;
-    height: 20px;
-    content: "";
-    background: var(--colour_drag_bar);
-    -webkit-app-region: drag;
-}
-
-::-webkit-scrollbar {
-    display: none;
+    --colour_background: #5C5C5C;
 }
 
 body {
+    margin: 0;
+    padding: 0;
+
     font-family: sans-serif;
     color: white;
+
     background: var(--colour_background);
     overflow: hidden;
 }
 
-button {
-    box-sizing: border-box;
-    border: none;
-    border-radius: 0.25em;
-    padding: 1em;
-    padding: 0.5em 0;
-    font-size: 1em;
-    color: black;
-    background: var(--colour_button_normal);
-    transition: 0.2s;
+#app {
+    display: flex;
+    height: 100vh;
+    flex-direction: row;
+
+    background: repeating-linear-gradient(-45deg,
+            #575757,
+            #575757 2px,
+            var(--colour_background) 2px,
+            var(--colour_background) 20px);
 }
 
-button:hover {
-    color: white;
-    background: var(--colour_button_hover);
+.d-flex {
+    display: flex;
 }
 
-button:focus {
-    outline: none;
+.justify-center {
+    justify-content: center;
+}
+
+.m-0 {
+    margin: 0;
 }
 
 .playing {
-    display: block;
-    font-weight: normal;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    width: 100vw;
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.playing .controls {
+    padding: 20px 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: linear-gradient(180deg, rgba(19, 19, 19, 0.1665) 0%, rgba(19, 19, 19, 0.37) 100%);
+}
+
+.playing .controls img {
+    width: 60px;
+    height: 60px;
+}
+
+.playing .information {
+    padding: 2rem;
+}
+
+.playing .information h1,
+.playing .information h2 {
+    margin: 0;
+    font-weight: 100;
+}
+
+.playing .information h1 {
+    margin-top: 20px;
 }
 
 .playlist {
+    min-width: 403px;
+    width: 403px;
+    max-width: 403px;
+    padding: 20px;
+    padding-right: 0;
+    padding-left: 10px;
+
+    background: #434343;
+}
+
+.playlist .musicEntry {
+    position: relative;
     display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 50vh;
-    border-radius: .25em;
-    color: black;
-    background: var(--colour_playlist_odd);
-    overflow-y: scroll;
+    padding: 20px;
+    margin-bottom: 4px;
+
+    background: #535353;
 }
 
-.playlist *:nth-child(even) {
-    color: black;
-    background: var(--colour_playlist_even);
+.playlist .musicEntry.selected {
+    background: #2B5DAA;
 }
 
-.playlist p {
-    margin: 0em;
-    padding: 0.5em;
-    word-wrap: break-word;
-}
-
-.playlist .selected {
-    color: white;
-    background: var(--colour_playlist_selected);
-}
-
-.controls {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    grid-gap: 15px;
-    grid-template-areas: "p p p n n n" "e e e e e e";
-    margin-top: 1.5em;
-}
-
-.controls button:nth-child(1) {
-    grid-area: p;
-}
-
-.controls button:nth-child(2) {
-    grid-area: n;
-}
-
-.controls button:nth-child(3) {
-    grid-area: e;
-}
-
-.exit_button {
+.playlist .musicEntry::before {
+    content: "";
+    position: absolute;
     display: block;
-    color: white;
-    background: var(--colour_button_exit);
-}
+    width: 5px;
+    height: 50px;
+    left: 14px;
+    top: 50%;
 
-.exit_button:hover {
-    background: var(--colour_button_exit_hover);
+    background: #404040;
+    margin-right: 8px;
+    margin-left: -8px;
+    transform: translate(0, -50%);
 }
-
 
 /* The overlay that pops up when file is dragged */
 
@@ -129,10 +122,10 @@ button:focus {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     width: 100%;
     height: 100%;
-    align-items: center;
+
     font-size: 10vw;
     background: rgba(0, 0, 0, 0.804);
-    opacity: 1;
 }

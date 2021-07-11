@@ -50,6 +50,14 @@ export class AudioPlayer {
         this.elements_playlistEntries.push(element_entryContainer);
         this.musicEntries_playlist.push(musicEntry)
 
+        let indexValue = this.musicEntries_playlist.length - 1
+        // Add a listener to change the current music when a playlist item is clicked.
+        // TODO: This will need to be revised when music re-ordering is added.
+        element_entryContainer.addEventListener("click", () => {
+            this.changeMusic(indexValue)
+        })
+
+        this.element_playlistContainer.appendChild(element_entryContainer)
     }
 
     removeMusic(index: number = this.currentSongIndex) {

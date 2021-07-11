@@ -83,6 +83,7 @@ body {
     padding-left: 10px;
 
     background: #434343;
+    overflow-y: scroll;
 }
 
 .playlist .musicEntry {

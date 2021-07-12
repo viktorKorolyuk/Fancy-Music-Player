@@ -78,6 +78,7 @@ export class AudioPlayer {
     };
 
     this.gotoNextTrack();
+    this.togglePlay()
   }
 
   updateTrack() {

@@ -5,13 +5,16 @@ import pauseSVG from './svg/pause.svg';
 interface MusicEntry {
     name: string,
     url: string
+    file: File
 }
+
 export class AudioPlayer {
     private element_playBtn = $("#play-btn") as HTMLElement
     private element_playBtn_img = this.element_playBtn.querySelector("img") as HTMLImageElement
     private element_nextBtn = $("#next-btn") as HTMLElement
     private element_playlistContainer = $("#playlist") as HTMLElement;
     private element_currentEntryDisplay: HTMLElement = $("#playing") as HTMLElement
+    private element_thumbnail:HTMLElement = $("#playing") as HTMLElement
 
     private musicEntries_playlist: MusicEntry[] = []
     private elements_playlistEntries: HTMLParagraphElement[] = [];
@@ -21,8 +24,8 @@ export class AudioPlayer {
     private currentSongIndex: number = 0;
     constructor() {
         // Prepare event listeners.
-        this.audioPlayer.addEventListener("ended", this.audioPlayerOnEnd);
-        this.audioPlayer.addEventListener("error", this.audioPlayerError);
+        this.audioPlayer.addEventListener("ended", () => this.audioPlayerOnEnd());
+        this.audioPlayer.addEventListener("error", (e) => this.audioPlayerError(e));
 
         this.element_playBtn.addEventListener("click", () => this.togglePlay());
         this.element_nextBtn.addEventListener("click", () => this.chooseNextTrack())
@@ -51,6 +54,7 @@ export class AudioPlayer {
         this.musicEntries_playlist.push(musicEntry)
 
         let indexValue = this.musicEntries_playlist.length - 1
+
         // Add a listener to change the current music when a playlist item is clicked.
         // TODO: This will need to be revised when music re-ordering is added.
         element_entryContainer.addEventListener("click", () => {

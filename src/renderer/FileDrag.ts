@@ -47,7 +47,8 @@ async function scanFileEntry(item: FileOrDirectoryEntry):Promise<any> {
   return fileReader(item).then((file) => {
     player_instance.addMusic({
       name: file.name,
-      url: URL.createObjectURL(file)
+      url: URL.createObjectURL(file),
+      file: file
     });
   });
 }

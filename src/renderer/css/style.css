@@ -41,14 +41,18 @@ body {
 
 .playing {
     flex: 2;
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
 .playing .controls {
-    padding: 20px 1rem;
+    padding: 20px 0;
     display: flex;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
     align-items: center;
     justify-content: center;
 
@@ -86,20 +90,25 @@ body {
     overflow-y: scroll;
 }
 
-.playlist .musicEntry {
+.playlist .trackEntry {
     position: relative;
     display: flex;
     padding: 20px;
     margin-bottom: 4px;
 
     background: #535353;
+    transition: background 0.2s;
 }
 
-.playlist .musicEntry.selected {
+.playlist .trackEntry:hover {
+    background: #494949;
+}
+
+.playlist .trackEntry.selected {
     background: #2B5DAA;
 }
 
-.playlist .musicEntry::before {
+.playlist .trackEntry::before {
     content: "";
     position: absolute;
     display: block;

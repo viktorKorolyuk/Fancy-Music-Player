@@ -45,7 +45,7 @@ async function scanFileEntry(item: FileOrDirectoryEntry):Promise<any> {
   }
 
   return fileReader(item).then((file) => {
-    player_instance.addMusic({
+    player_instance.addTrack({
       name: file.name,
       url: URL.createObjectURL(file),
       file: file

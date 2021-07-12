@@ -1,179 +1,136 @@
 import { $ } from './Helper';
 import playSVG from './svg/play.svg';
 import pauseSVG from './svg/pause.svg';
-
-interface MusicEntry {
-    name: string,
-    url: string
-    file: File
-}
+import { AudioPlayerPlaylist, Track } from './AudioPlayerPlaylist';
 
 export class AudioPlayer {
-    private element_playBtn = $("#play-btn") as HTMLElement
-    private element_playBtn_img = this.element_playBtn.querySelector("img") as HTMLImageElement
-    private element_nextBtn = $("#next-btn") as HTMLElement
-    private element_playlistContainer = $("#playlist") as HTMLElement;
-    private element_currentEntryDisplay: HTMLElement = $("#playing") as HTMLElement
-    private element_thumbnail:HTMLElement = $("#playing") as HTMLElement
+  private element_playBtn = $("#play-btn") as HTMLElement
+  private element_playBtn_img = this.element_playBtn.querySelector("img") as HTMLImageElement
+  private element_nextBtn = $("#next-btn") as HTMLElement
+  private element_currentEntryDisplay: HTMLElement = $("#playing") as HTMLElement
+  // private element_thumbnail: HTMLElement = $("#playing") as HTMLElement
 
-    private musicEntries_playlist: MusicEntry[] = []
-    private elements_playlistEntries: HTMLParagraphElement[] = [];
+  private _audioPlayer = new Audio();
+  private playlistManager = new AudioPlayerPlaylist();
 
-    private _audioPlayer = new Audio();
+  constructor() {
+    // Prepare event listeners.
+    this._audioPlayer.addEventListener("ended", () => this.audioPlayerOnEnd());
+    this._audioPlayer.addEventListener("error", (e) => this.audioPlayerError(e));
 
-    private currentSongIndex: number = 0;
-    constructor() {
-        // Prepare event listeners.
-        this.audioPlayer.addEventListener("ended", () => this.audioPlayerOnEnd());
-        this.audioPlayer.addEventListener("error", (e) => this.audioPlayerError(e));
+    this.element_playBtn.addEventListener("click", () => this.togglePlay());
+    this.element_nextBtn.addEventListener("click", () => this.chooseNextTrack())
+  }
 
-        this.element_playBtn.addEventListener("click", () => this.togglePlay());
-        this.element_nextBtn.addEventListener("click", () => this.chooseNextTrack())
+  // Add tracks to the DOM playlist.
+  addTrack(track: Track) {
+    // If this is the first item in the list, set it to be the selected track.
+    if (this.playlistManager.trackCount === 0) {
+      this.updateSongTitle(track);
     }
 
-    // Add music to the DOM playlist
-    addMusic(musicEntry: MusicEntry) {
+    this.playlistManager.addTrack(track, (index, element) => {
+      this.changeTrack(index)
+    })
+  }
 
-        // Add the new element to the playlist.
-        let element_entryContainer = document.createElement("div")
-        element_entryContainer.classList.add("musicEntry")
+  removeCurrentTrack() {
+    this.removeTrack(this.playlistManager.currentTrackIndex)
+  }
 
-        let element_p = document.createElement("p");
+  removeTrack(index: number) {
+    this.playlistManager.removeTrackAtIndex(index)
 
-        element_p.textContent = musicEntry.name;
-        element_entryContainer.appendChild(element_p)
+    this.togglePlay(); // Pause audio playback
+    this.changeTrack(index); // Update the DOM with the new track information
+    this.togglePlay()
+  }
 
-        // If this is the first item in the list, set it to be the selected music entry.
-        if (this.elements_playlistEntries.length == 0) {
-            element_entryContainer.classList.add("selected");
-            this.updateSongTitle(musicEntry);
-        }
+  // Change the current song header.
+  updateSongTitle(song: Track) {
+    this.element_currentEntryDisplay.innerText = `${song.name}`;
+  }
 
-        // Store the element reference and the music entry in memory for later removal.
-        this.elements_playlistEntries.push(element_entryContainer);
-        this.musicEntries_playlist.push(musicEntry)
+  // Changes the track to the specified index.
+  changeTrack(index: number) {
+    let track = this.playlistManager.changeTrack(index)
 
-        let indexValue = this.musicEntries_playlist.length - 1
+    this.updateSongTitle(track);
 
-        // Add a listener to change the current music when a playlist item is clicked.
-        // TODO: This will need to be revised when music re-ordering is added.
-        element_entryContainer.addEventListener("click", () => {
-            this.changeMusic(indexValue)
-        })
+    if (this._audioPlayer.paused === false) {
+      this.playTrack();
+    }
+  }
 
-        this.element_playlistContainer.appendChild(element_entryContainer)
+  // Starts playing the current track.
+  playTrack() {
+    let track = this.playlistManager.currentTrack;
+    // Don't re-add the same source URL. Even if the source is identical, when it changes, the track commences at the begining.
+    if (this._audioPlayer.src != track.url) this._audioPlayer.src = track.url;
+    this._audioPlayer.play();
+  }
+
+  // Deals with playing next track after previous is finished.
+  // Stops at end of playlist to prevent looping.
+  // TODO: This (^) should be an option.
+  // TODO: An option for enabling auto-play
+  audioPlayerOnEnd() {
+    // If the next track doesn't exist, pause the playback.
+    if (this.playlistManager.isAtEnd) {
+      this.togglePlay();
+      this.playlistManager.resetIndex()
+      return
+    };
+
+    this.chooseNextTrack();
+  }
+
+  chooseNextTrack() {
+    if (!this._audioPlayer.paused) this.togglePlay()
+    this.playlistManager.getNextTrack()
+    this.updateSongTitle(this.playlistManager.currentTrack)
+    this.playlistManager.scrollToCurrentTrack()
+    this.togglePlay()
+  }
+
+  /**
+   * Handler for toggling audio playback. If the state was paused, it will play; otherwise it will pause.
+   */
+  togglePlay() {
+    // If there are no pending tracks, do nothing.
+    if (this.playlistManager.trackCount === 0) {
+      console.error("No tracks.")
+      return;
     }
 
-    removeMusic(index: number = this.currentSongIndex) {
-        this.elements_playlistEntries[index].remove();
-        this.elements_playlistEntries.splice(index, 1);
-        this.musicEntries_playlist.splice(index, 1);
+    this.element_playBtn_img.src = this._audioPlayer.paused ? pauseSVG : playSVG;
+    if (this._audioPlayer.paused) {
 
-        this.togglePlay();
-        this.changeMusic(this.currentSongIndex);
-        this.audioPlayer.play();
+      // Set the audio source to the current chosen song URL.
+      this.playTrack();
+    } else {
+      this._audioPlayer.pause();
     }
+  }
 
-    // Change the current song header.
-    updateSongTitle(song: MusicEntry) {
-        this.element_currentEntryDisplay.innerText = `${song.name}`;
+  /**
+   * Callback for any errors raised by the internal AudioPlayer reference.
+   * 
+   * @param e Event from AudioPlayer. Not used.
+   */
+  audioPlayerError(e: any) {
+    try {
+      // Remove the current track
+      this.removeCurrentTrack();
+    } catch (e) {
+      console.error("Something went wrong when removing a track entry.")
+      console.error(e)
     }
-
-    // Changes the music to the specified index.
-    changeMusic(index: number) {
-        // Find the first DOM element with a "selected" class name.
-        let selectedElement = $(".selected")
-
-        if (selectedElement != null) {
-            // The current item is de-selected
-            selectedElement.classList.remove("selected");
-        }
-
-        // Verify index is within the bounds of the avaliable playlist size.
-        // This also ensures that the selection loops back to start.
-        index %= this.elements_playlistEntries.length;
-
-        if (this.elements_playlistEntries.length !== 0) {
-
-            // Set the next item's class to "selected"
-            this.element_playlistContainer.children[index].classList.add("selected");
-            this.currentSongIndex = index;
-            this.updateSongTitle(this.musicEntries_playlist[index]);
-
-            if (this.audioPlayer.paused === false) {
-                this.playMusic();
-            }
-        }
-    }
-
-    // Starts the music if it was not previously.
-    playMusic() {
-        // Don't re-add the same source URL. Even if the source is identical, when it changes, the music commences at the begining.
-        if (this.audioPlayer.src != this.musicEntries_playlist[this.currentSongIndex].url) this.audioPlayer.src = this.musicEntries_playlist[this.currentSongIndex].url;
-        this.audioPlayer.play();
-    }
-
-    // Deals with playing next track after previous is finished.
-    // Stops at end of playlist to prevent looping.
-    // TODO: This (^) should be an option.
-    audioPlayerOnEnd() {
-        // If the next track doesn't exist, pause the playback.
-        if (this.currentSongIndex + 1 >= this.musicEntries_playlist.length) {
-            this.togglePlay();
-        };
-
-        this.changeMusic(this.currentSongIndex + 1);
-
-        // Music is now paused. Let's play
-        this.playMusic();
-    }
-
-    chooseNextTrack() {
-        this.changeMusic(this.currentSongIndex + 1);
-    }
-
-    /**
-     * Handler for toggling audio playback. If the state was paused, it will play; otherwise it will pause.
-     */
-    togglePlay() {
-        // If there is no pending music, do nothing.
-        if (this.musicEntries_playlist.length === 0) {
-            console.error("No music.")
-            return;
-        }
-
-        this.element_playBtn_img.src = this.audioPlayer.paused ? pauseSVG : playSVG;
-        if (this.audioPlayer.paused) {
-
-            // Set the audio source to the current chosen song URL.
-            this.playMusic();
-        } else {
-            this.audioPlayer.pause();
-        }
-    }
-
-    /**
-     * Callback for any errors raised by the internal AudioPlayer reference.
-     * 
-     * @param e Event from AudioPlayer. Not used.
-     */
-    audioPlayerError(e: any) {
-        try {
-            this.removeMusic();
-        } catch (e) {
-            console.error("Something went wrong when removing a music entry.")
-            console.error(e)
-        }
-    }
-
-    public get audioPlayer() {
-        return this._audioPlayer;
-    }
-
+  }
 }
 
 export var player_instance: AudioPlayer;
 
 export function setup_player() {
-    player_instance = new AudioPlayer()
+  player_instance = new AudioPlayer()
 }

@@ -59,17 +59,9 @@ export class AudioPlayer {
 
     this.updateTrackTitle(track);
 
-    if (this._audioPlayer.paused === false) {
-      this.playTrack();
+    if (this.isPlaying) {
+      this.playCurrentTrack();
     }
-  }
-
-  // Starts playing the current track.
-  playTrack() {
-    let track = this.playlistManager.currentTrack;
-    // Don't re-add the same source URL. Even if the source is identical, when it changes, the track commences at the begining.
-    if (this._audioPlayer.src != track.url) this._audioPlayer.src = track.url;
-    this._audioPlayer.play();
   }
 
   // Deals with playing next track after previous is finished.
@@ -93,7 +85,7 @@ export class AudioPlayer {
   }
 
   gotoPreviousTrack() {
-    if(this._audioPlayer.paused == false) this.togglePlay()
+    if(this.isPlaying) this.togglePlay()
     this.playlistManager.getPreviousTrack()
     this.updateTrack()
 
@@ -101,7 +93,7 @@ export class AudioPlayer {
   }
 
   gotoNextTrack() {
-    if (this._audioPlayer.paused == false) this.togglePlay()
+    if (this.isPlaying) this.togglePlay()
     this.playlistManager.getNextTrack()
     this.updateTrack()
 
@@ -118,22 +110,29 @@ export class AudioPlayer {
       return;
     }
 
-    this.element_playBtn_img.src = this._audioPlayer.paused ? pauseSVG : playSVG;
-    if (this._audioPlayer.paused) {
-
-      // Set the audio source to the current chosen song URL.
-      this.playTrack();
-    } else {
+    this.element_playBtn_img.src = this.isPlaying ? playSVG : pauseSVG;
+    
+    if (this.isPlaying) {
       this._audioPlayer.pause();
+    } else {
+      this.playCurrentTrack();
     }
+  }
+
+  // Starts playing the current track.
+  playCurrentTrack() {
+    let track = this.playlistManager.currentTrack;
+    // Don't re-add the same source URL. Even if the source is identical. When the source changes the track commences at the begining.
+    if (this._audioPlayer.src != track.url) this._audioPlayer.src = track.url;
+    this._audioPlayer.play();
   }
 
   /**
    * Callback for any errors raised by the internal AudioPlayer reference.
    * 
-   * @param e Event from AudioPlayer. Not used.
+   * @param error Event from AudioPlayer. Not used.
    */
-  audioPlayerError(e: any) {
+  audioPlayerError(error: any) {
     try {
       // Remove the current track
       this.removeCurrentTrack();
@@ -141,6 +140,10 @@ export class AudioPlayer {
       console.error("Something went wrong when removing a track entry.")
       console.error(e)
     }
+  }
+
+  get isPlaying() {
+    return this._audioPlayer.paused === false;
   }
 }
 

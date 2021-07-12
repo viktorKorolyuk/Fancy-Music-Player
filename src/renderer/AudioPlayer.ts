@@ -5,8 +5,9 @@ import { AudioPlayerPlaylist, Track } from './AudioPlayerPlaylist';
 
 export class AudioPlayer {
   private element_playBtn = $("#play-btn") as HTMLElement
-  private element_playBtn_img = this.element_playBtn.querySelector("img") as HTMLImageElement
   private element_nextBtn = $("#next-btn") as HTMLElement
+  private element_prevBtn = $("#prev-btn") as HTMLElement
+  private element_playBtn_img = this.element_playBtn.querySelector("img") as HTMLImageElement
   private element_currentEntryDisplay: HTMLElement = $("#playing") as HTMLElement
   // private element_thumbnail: HTMLElement = $("#playing") as HTMLElement
 
@@ -19,18 +20,19 @@ export class AudioPlayer {
     this._audioPlayer.addEventListener("error", (e) => this.audioPlayerError(e));
 
     this.element_playBtn.addEventListener("click", () => this.togglePlay());
-    this.element_nextBtn.addEventListener("click", () => this.chooseNextTrack())
+    this.element_nextBtn.addEventListener("click", () => this.gotoNextTrack());
+    this.element_prevBtn.addEventListener("click", () => this.gotoPreviousTrack());
   }
 
   // Add tracks to the DOM playlist.
   addTrack(track: Track) {
     // If this is the first item in the list, set it to be the selected track.
     if (this.playlistManager.trackCount === 0) {
-      this.updateSongTitle(track);
+      this.updateTrackTitle(track);
     }
 
     this.playlistManager.addTrack(track, (index, element) => {
-      this.changeTrack(index)
+      this.changeTrackToIndex(index)
     })
   }
 
@@ -42,20 +44,20 @@ export class AudioPlayer {
     this.playlistManager.removeTrackAtIndex(index)
 
     this.togglePlay(); // Pause audio playback
-    this.changeTrack(index); // Update the DOM with the new track information
+    this.changeTrackToIndex(index); // Update the DOM with the new track information
     this.togglePlay()
   }
 
   // Change the current song header.
-  updateSongTitle(song: Track) {
+  updateTrackTitle(song: Track) {
     this.element_currentEntryDisplay.innerText = `${song.name}`;
   }
 
   // Changes the track to the specified index.
-  changeTrack(index: number) {
+  changeTrackToIndex(index: number) {
     let track = this.playlistManager.changeTrack(index)
 
-    this.updateSongTitle(track);
+    this.updateTrackTitle(track);
 
     if (this._audioPlayer.paused === false) {
       this.playTrack();
@@ -82,14 +84,27 @@ export class AudioPlayer {
       return
     };
 
-    this.chooseNextTrack();
+    this.gotoNextTrack();
   }
 
-  chooseNextTrack() {
-    if (!this._audioPlayer.paused) this.togglePlay()
-    this.playlistManager.getNextTrack()
-    this.updateSongTitle(this.playlistManager.currentTrack)
+  updateTrack() {
+    this.updateTrackTitle(this.playlistManager.currentTrack)
     this.playlistManager.scrollToCurrentTrack()
+  }
+
+  gotoPreviousTrack() {
+    if(this._audioPlayer.paused == false) this.togglePlay()
+    this.playlistManager.getPreviousTrack()
+    this.updateTrack()
+
+    this.togglePlay()
+  }
+
+  gotoNextTrack() {
+    if (this._audioPlayer.paused == false) this.togglePlay()
+    this.playlistManager.getNextTrack()
+    this.updateTrack()
+
     this.togglePlay()
   }
 

@@ -70,9 +70,13 @@ export class AudioPlayerPlaylist {
     
     return this.track_playlist[index]
   }
+  
+  getPreviousTrack() {
+    return this.changeTrack(this.playlistIndex - 1);
+  }
 
   getNextTrack() {
-    return this.changeTrack(this.playlistIndex + 1)
+    return this.changeTrack(this.playlistIndex + 1);
   }
   
   removeCurrentTrack() {

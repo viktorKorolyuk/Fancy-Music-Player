@@ -56,6 +56,7 @@ export class AudioPlayer {
   // Changes the track to the specified index.
   changeTrackToIndex(index: number) {
     let track = this.playlistManager.changeTrack(index)
+    if (track == undefined) return; // If there are no tracks available, do nothing
 
     this.updateTrackTitle(track);
 
@@ -85,19 +86,17 @@ export class AudioPlayer {
   }
 
   gotoPreviousTrack() {
-    if(this.isPlaying) this.togglePlay()
-    this.playlistManager.getPreviousTrack()
-    this.updateTrack()
-
-    this.togglePlay()
+    AudioPlayer.pauseActRestore(() => {
+      this.playlistManager.getPreviousTrack()
+      this.updateTrack()
+    }, this)
   }
 
   gotoNextTrack() {
-    if (this.isPlaying) this.togglePlay()
-    this.playlistManager.getNextTrack()
-    this.updateTrack()
-
-    this.togglePlay()
+    AudioPlayer.pauseActRestore(() => {
+      this.playlistManager.getNextTrack()
+      this.updateTrack()
+    }, this)
   }
 
   /**
@@ -111,7 +110,7 @@ export class AudioPlayer {
     }
 
     this.element_playBtn_img.src = this.isPlaying ? playSVG : pauseSVG;
-    
+
     if (this.isPlaying) {
       this._audioPlayer.pause();
     } else {
@@ -144,6 +143,24 @@ export class AudioPlayer {
 
   get isPlaying() {
     return this._audioPlayer.paused === false;
+  }
+
+  /**
+   * Intent-based wrapper for actions involving audio tracks.
+   * Use this method to perform tasks requiring audio-element play state to be paused and restored.
+   * Cases:
+   *  If the player was playing, pause and execute the callback. Resume playback after the callback.
+   *  Otherwise, if the player was paused, execute the callback and keep the player paused.
+   * 
+   * @param callback Action to perform when the audio element is ready.
+   * @param context AudioPlayer context to perform the action on.
+   */
+  static pauseActRestore(callback: () => void, context: AudioPlayer) {
+    let was_playing = context.isPlaying
+    if (was_playing) context.togglePlay()
+
+    callback()
+    if (was_playing) context.togglePlay()
   }
 }
 

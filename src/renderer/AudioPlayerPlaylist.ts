@@ -53,7 +53,9 @@ export class AudioPlayerPlaylist {
     })
   }
 
-  changeTrack(index: number) {
+  changeTrack(index: number): Track | undefined {
+    if (this.trackCount == 0) return undefined
+
     // Find the first DOM element with a "selected" class name.
     let selectedElement = $(".selected")
 
@@ -64,13 +66,15 @@ export class AudioPlayerPlaylist {
 
     // Verify index is within the bounds of the avaliable playlist size.
     // This also ensures that the selection loops back to start.
-    index %= this.track_playlist.length;
+    if (index < 0) index = this.trackCount + index
+
+    index %= this.trackCount;
     this.playlistIndex = index
     this.element_playlistContainer.children[index].classList.add("selected");
-    
+
     return this.track_playlist[index]
   }
-  
+
   getPreviousTrack() {
     return this.changeTrack(this.playlistIndex - 1);
   }
@@ -78,7 +82,7 @@ export class AudioPlayerPlaylist {
   getNextTrack() {
     return this.changeTrack(this.playlistIndex + 1);
   }
-  
+
   removeCurrentTrack() {
     this.removeTrackAtIndex(this.playlistIndex)
   }

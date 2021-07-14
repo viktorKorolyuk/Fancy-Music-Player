@@ -1,4 +1,5 @@
-# Fancy Music Player (Fmp)
+#  <img src="./build/icon.png" alt="drawing" width="70"/> Fancy Music Player (Fmp)
+
 ![UI Sample](./assets/images/sample.png)
 
 A simple and lightweight music player built with Electron.
